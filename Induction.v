@@ -105,7 +105,15 @@ Proof.
   Qed.
 
 (* Exercise evenb S *)
-
+Theorem evenb_S : forall n : nat,
+  evenb (S n) = negb (evenb n).
+Proof.
+  intros n. induction n as [| n' IHn'].
+  - reflexivity.
+  - rewrite -> IHn'.
+  rewrite -> negb_involutive.
+  reflexivity.
+  Qed.
 
 Theorem mult_0_plus' : forall n m : nat,
   (0 + n) * m = n * m.
@@ -126,4 +134,13 @@ Proof.
   rewrite -> H.
   reflexivity.
   Qed.
+
+Theorem beq_nat_refl: forall n1:nat,
+  beq_nat n1 n1 = true.
+Proof.
+  intros n1.
+  induction n1 as [|n' IHn'].
+  - reflexivity.
+  - simpl. apply IHn'.
+  Qed. 
 

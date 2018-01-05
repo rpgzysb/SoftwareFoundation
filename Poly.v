@@ -455,11 +455,86 @@ Proof. reflexivity. Qed.
 
 Module Exercises.
 (* Exercise fold length *)
+Definition fold_length{X:Type}(l:list X) : nat 
+  := fold (fun _ n => S n) l 0.
+
+Example test_fold_length1: fold_length [4;7;0] = 3.
+Proof. reflexivity. Qed.
+
+Theorem fold_length_add: forall X (h:X)(l:list X),
+  fold_length (h::l) = S (fold_length l).
+Proof.
+  intros X h l. induction l as [| x l' IHl'].
+  - reflexivity.
+  - reflexivity.
+  Qed.
+
+Theorem fold_length_correct: forall X (l:list X),
+  fold_length l = length l.
+Proof.
+  intros X l. induction l as [| h t IHl'].
+  - simpl. reflexivity.
+  - simpl. rewrite <- IHl'.
+  apply fold_length_add.
+  Qed.
 
 (* Exercise fold map *)
 
 (* Exercise currying *)
+Definition prod_curry{X Y Z : Type}
+  (f:X*Y->Z)(x:X)(y:Y) : Z := f (x,y).
+
+Definition prod_uncurry{X Y Z : Type}
+  (f:X->Y->Z)(p:X*Y) : Z :=
+  f (fst p) (snd p).
+
+Example test_map1': map (plus 3) [2;0;2] = [5;3;5].
+Proof. reflexivity. Qed.
+
+Check @prod_curry. Check @prod_uncurry.
+
+Theorem uncurry_curry: forall (X Y Z : Type)
+  (f:X->Y->Z) x y,
+  prod_curry (prod_uncurry f) x y = f x y.
+Proof.
+  intros X Y Z f x y.
+  unfold prod_uncurry.
+  unfold prod_curry.
+  unfold fst.
+  unfold snd.
+  reflexivity.
+  Qed.
+
+Theorem curry_uncurry: forall (X Y Z : Type)
+  (f:(X*Y)->Z)(p:X*Y),  
+  prod_uncurry (prod_curry f) p = f p.
+Proof.
+  intros X Y Z f p.
+  unfold prod_curry.
+  unfold prod_uncurry.
+  destruct p as [x y].
+  unfold fst. unfold snd.
+  reflexivity.
+  Qed.
 
 (* Exercise church numerals *)
 
+Module Church.
+
+Definition nat := forall X:Type, (X->X)->X->X.
+
+Definition one:nat :=
+  fun (X:Type) (f:X->X)(x:X) => f x.
+
+Definition two:nat :=
+  fun(X:Type)(f:X->X)(x:X) => f (f x).
+
+Definition zero:nat :=
+  fun(X:Type)(f:X->X)(x:X) => x.
+
+
+
+End Church.
+
 End Exercises.
+

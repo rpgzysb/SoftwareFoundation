@@ -233,7 +233,7 @@ Fixpoint beq_nat (n m : nat) : bool :=
 Compute (beq_nat 3 2).
 Compute (1 + 2).
 
-(* Exercise bag functions *)
+(* Exercise bag_functions *)
 Fixpoint count(v:nat)(s:bag) : nat
   := 
   match s with 
@@ -655,10 +655,26 @@ Fixpoint find(x:id)(d:partial_map) : natoption :=
     else find x d'
   end.
 
-End PartialMap.
 
 (* Exercise update_eq *)
+Theorem update_eq:
+  forall (d:partial_map)(x:id)(v:nat),  
+  find x (update d x v) = Some v.
+Proof.
+  intros d x v. simpl. rewrite <- beq_id_refl.
+  reflexivity.
+  Qed.
 
 (* Exercise update_neq *)
+Theorem update_neq:
+  forall (d:partial_map)(x y : id)(o:nat),
+  beq_id x y = false -> 
+  find x (update d y o) = find x d.
+Proof.
+  intros d x y o eq.
+  simpl. rewrite -> eq.
+  reflexivity.
+  Qed.  
 
-(* Exercise baz_num_elts *)
+End PartialMap.
+
